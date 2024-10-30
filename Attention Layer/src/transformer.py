@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from feed_forward import FeedForward
-from multi_head_attention import MultiHeadAttentionLayer
+from .feed_forward import FeedForward
+from .multi_head_attention import MultiHeadAttentionLayer
 
 class AddAndNorm(nn.Module):
     def __init__(self, size: int):
