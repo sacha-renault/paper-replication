@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
-from single_head_attention import SingleHeadAttentionLayer
 
 class MultiHeadAttentionLayer(nn.Module):
     def __init__(self, num_heads: int, d_model: int):
@@ -22,6 +21,9 @@ class MultiHeadAttentionLayer(nn.Module):
         self.linear_o = nn.Linear(d_model, d_model)
 
     def forward(self, q: Tensor, k: Tensor, v: Tensor, mask: Tensor | None = None):
+        # get bs
+        batch_size = q.size(0)
+
         # Start with linear projection
         # Shape: (batch_size, seq_length, d_model)
         q = self.linear_q(q)
@@ -30,9 +32,9 @@ class MultiHeadAttentionLayer(nn.Module):
 
         # Reshaping
         # Shape: (batch_size, num_heads, seq_length, head_dim)
-        q = q.view(q.size(0), q.size(1), self.num_heads, self.head_dim).transpose(1, 2)
-        k = k.view(k.size(0), k.size(1), self.num_heads, self.head_dim).transpose(1, 2)
-        v = v.view(v.size(0), v.size(1), self.num_heads, self.head_dim).transpose(1, 2)
+        q = q.view(batch_size, q.size(1), self.num_heads, self.head_dim).transpose(1, 2)
+        k = k.view(batch_size, k.size(1), self.num_heads, self.head_dim).transpose(1, 2)
+        v = v.view(batch_size, v.size(1), self.num_heads, self.head_dim).transpose(1, 2)
 
         # Perform attention scores
         x = (q @ k.transpose(-2, -1)) / (k.size(-1) ** 0.5)
