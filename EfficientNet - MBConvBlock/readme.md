@@ -8,11 +8,12 @@ This folder contains my implementation of the MBConvBlock for the paper:
 
 ## Files
 
-- efficientnet_mbconv.py: Contains the core MBConvBlock class, implementing the mobile inverted bottleneck convolution with squeeze-and-excitation.
+- [efficientnet_mbconv.py](./efficientnet_mbconv.py): Contains my implementation of the core MBConvBlock class, with squeeze-and-excitation.
+- [efficientnet_b0.py](./efficientnet_b0.py): Contains my implementation of efficientnet b0 model.
 
 ## WORK IN PROGRESS
 
 TODOs:
 
-- Tests
-- Optimization
+- Test a full training on any cv dataset (Imagenet ?).
+- make a more flexible efficientnet class that can be any b0 to b7 model.
