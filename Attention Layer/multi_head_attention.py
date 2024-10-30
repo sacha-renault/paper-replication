@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
 from single_head_attention import SingleHeadAttentionLayer
 
 class MultiHeadAttentionLayer(nn.Module):
@@ -20,7 +21,7 @@ class MultiHeadAttentionLayer(nn.Module):
         # Final linear for output
         self.linear_o = nn.Linear(d_model, d_model)
 
-    def forward(self, q, k, v, mask=None):
+    def forward(self, q: Tensor, k: Tensor, v: Tensor, mask: Tensor | None = None):
         # Start with linear projection
         # Shape: (batch_size, seq_length, d_model)
         q = self.linear_q(q)
