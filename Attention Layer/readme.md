@@ -7,4 +7,4 @@ It's been a long time i said i would implement this so ... here we go.
 
 ## Step by step
 
-- [Single Head Attention Layer]("./single_head_attention.py"): Basic single head attention layer, as explained in page 4. I also tried to workaround the mask thing, using a ew product instead of sum. (see `forward_workaround()`)
+- [Single Head Attention Layer]("./single_head_attention.py"): Basic single head attention layer, as explained in page 4. I also tried to workaround the mask thing, using a ew product instead of sum. (see `forward_workaround()`). `forward_workaround()` uses mutliplication instead of addition for masking, it allows to use directly the boolean mask without having any transformations.
