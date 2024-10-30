@@ -79,11 +79,11 @@ class Transformer(nn.Module):
 
         self.linear_output = nn.Linear(d_model, vocab_size)
 
-    def forward(self, inputs: Tensor, outputs: Tensor, mask = None) -> Tensor:
+    def forward(self, inputs: Tensor, outputs: Tensor, encoder_mask = None, decoder_mask = None) -> Tensor:
         # encoder part
         x = inputs
         for block in self.encoder:
-            x = block(x, mask)
+            x = block(x, encoder_mask)
 
         # keep a reference on the output of decoder
         encoder_output = x
@@ -92,7 +92,7 @@ class Transformer(nn.Module):
         # for the cross attention part
         x = outputs
         for block in self.decoder:
-            x = block(x, encoder_output, mask)
+            x = block(x, encoder_output, decoder_mask)
 
         # apply a final linear layer
         x = self.linear_output(x)
