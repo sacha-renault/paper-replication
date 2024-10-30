@@ -3,13 +3,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class SingleHeadAttentionLayer(nn.Module):
-    def __init__(self):
+    def __init__(self, d_model: int):
         super(SingleHeadAttentionLayer, self).__init__()
 
-        # init softmax layer
+        self.d_model = d_model
         self.softmax = nn.Softmax(2)
 
     def forward(self, q, k, v, mask = None):
+        # Assert that the last dimension of q, k, and v matches d_model
+        assert all((q.shape[2] == self.d_model, k.shape[2] == self.d_model, v.shape[2] == self.d_model)), \
+            "Input dimensions must match d_model"
+
         x = q @ k.transpose(-2, -1)     # matmul QxK.T
         x = x / (k.size(-1) ** 0.5)     # scaling using kqdim
         if mask is not None:
@@ -19,6 +23,10 @@ class SingleHeadAttentionLayer(nn.Module):
         return x @ v
 
     def forward_workaround(self, q, k, v, mask = None):
+        # Assert that the last dimension of q, k, and v matches d_model
+        assert all((q.shape[2] == self.d_model, k.shape[2] == self.d_model, v.shape[2] == self.d_model)), \
+            "Input dimensions must match d_model"
+
         x = q @ k.transpose(-2, -1)     # matmul QxK.T
         x = x / (k.size(-1) ** 0.5)     # scaling using kqdim
         x = self.softmax(x)             # softmaxing before masking
@@ -43,7 +51,7 @@ if __name__ == "__main__":
                         [1, 1, 0]], dtype=torch.float32)  # Second sequence
 
     # Initialize the attention layer
-    attention_layer = SingleHeadAttentionLayer()
+    attention_layer = SingleHeadAttentionLayer(d_model)
 
     # Compute outputs
     output_workaround = attention_layer.forward_workaround(q, k, v, mask)
