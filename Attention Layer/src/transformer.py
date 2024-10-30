@@ -70,18 +70,25 @@ class Transformer(nn.Module):
                  n_decoder_block: int = 6,
                  vocab_size: int = 512):
         super(Transformer, self).__init__() # forgot this previously
+        self.d_model = d_model
 
+        # encoder
+        self.encoder_embedding = nn.Embedding(vocab_size, d_model)
         self.encoder = nn.ModuleList([
             NxEncoderBlock(mha_heads, d_model, ffn_hidden_dim) for _ in range(n_encoder_block)])
 
+        # decoder
+        self.decoder_embedding = nn.Embedding(vocab_size, d_model)
         self.decoder = nn.ModuleList([
             NxDecoderBlock(mha_heads, d_model, ffn_hidden_dim) for _ in range(n_decoder_block)])
 
+        # output
         self.linear_output = nn.Linear(d_model, vocab_size)
 
     def forward(self, inputs: Tensor, outputs: Tensor, encoder_mask = None, decoder_mask = None) -> Tensor:
         # encoder part
-        x = inputs
+        x = self.encoder_embedding(inputs) * (self.d_model ** 0.5)
+        # TODO need to add positional encoding
         for block in self.encoder:
             x = block(x, encoder_mask)
 
@@ -90,7 +97,8 @@ class Transformer(nn.Module):
 
         # decoder part, it takes the output of encoder as query
         # for the cross attention part
-        x = outputs
+        x = self.decoder_embedding(outputs) * (self.d_model ** 0.5)
+        # TODO need to add positional encoding
         for block in self.decoder:
             x = block(x, encoder_output, decoder_mask)
 
