@@ -104,7 +104,7 @@ class Transformer(nn.Module):
 
         # apply a final linear layer
         x = self.linear_output(x)
-        return F.softmax(x, dim=-1)
+        return x
 
 if __name__ == "__main__":
     model = Transformer()
