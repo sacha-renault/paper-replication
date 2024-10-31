@@ -90,7 +90,7 @@ class Transformer(nn.Module):
 
     def _set_positional_encoding(self) -> None:
         # positional encoding
-        positions = torch.arange(0, self._max_len).unsqueeze(1).repeat(1, self.d_model)
+        positions = torch.arange(0, self._max_len).unsqueeze(1)
         dimensions = torch.arange(0, self.d_model).unsqueeze(0)
         angle_rates = 1 / (10_000 ** (dimensions // 2 * 2 / self.d_model))
         positional_encoding = torch.zeros((self._max_len, self.d_model))
@@ -109,7 +109,7 @@ class Transformer(nn.Module):
 
     def forward(self, inputs: Tensor, outputs: Tensor, encoder_mask = None, decoder_mask = None) -> Tensor:
         # ensure positional encoding isn't smaller than max len
-        assert inputs.size(1) <= self._max_len and outputs.size(1) <= self._max_len (
+        assert inputs.size(1) <= self._max_len and outputs.size(1) <= self._max_len, (
             "Input size is greater than max sequence length"
             "Considere truncating or increase max seq size")
 
@@ -141,10 +141,3 @@ class Transformer(nn.Module):
         # else, we return the probability of token
         else:
             return F.softmax(x, dim=-1)
-
-if __name__ == "__main__":
-    model = Transformer()
-
-    with torch.no_grad():
-        output = model(torch.randn(1, 25, 512), torch.randn(1, 25, 512))
-        print(output.shape)
