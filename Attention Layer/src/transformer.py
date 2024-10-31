@@ -18,27 +18,33 @@ class NxEncoderBlock(nn.Module):
     def __init__(self,
                  mha_heads: int = 8,
                  d_model: int = 512,
-                 ffn_hidden_dim: int = 2048):
+                 ffn_hidden_dim: int = 2048,
+                 dropout_rate: float = 0):
         super(NxEncoderBlock, self).__init__()
         self.ffn = FeedForward(d_model, ffn_hidden_dim, d_model)
         self.mha = MultiHeadAttentionLayer(mha_heads, d_model)
         self.add_and_norm1 = AddAndNorm(d_model)
         self.add_and_norm2 = AddAndNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout_rate) if dropout_rate > 0 else nn.Identity()
+        self.dropout2 = nn.Dropout(dropout_rate) if dropout_rate > 0 else nn.Identity()
 
     def forward(self, x: Tensor, mask = None) -> Tensor:
         # Self-attention with add & norm
         attention_output = self.mha(x, x, x, mask)
+        attention_output = self.dropout1(attention_output)
         x = self.add_and_norm1(x, attention_output)
 
         # Feed-forward with add & norm
         ffn_output = self.ffn(x)
+        ffn_output = self.dropout2(ffn_output)
         return self.add_and_norm2(x, ffn_output)
 
 class NxDecoderBlock(nn.Module):
     def __init__(self,
                  mha_heads: int = 8,
                  d_model: int = 512,
-                 ffn_hidden_dim: int = 2048):
+                 ffn_hidden_dim: int = 2048,
+                 dropout_rate: float = 0):
         super(NxDecoderBlock, self).__init__()
         self.ffn = FeedForward(d_model, ffn_hidden_dim, d_model)
         self.self_attention = MultiHeadAttentionLayer(mha_heads, d_model)
@@ -46,18 +52,24 @@ class NxDecoderBlock(nn.Module):
         self.add_and_norm1 = AddAndNorm(d_model)
         self.add_and_norm2 = AddAndNorm(d_model)
         self.add_and_norm3 = AddAndNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout_rate) if dropout_rate > 0 else nn.Identity()
+        self.dropout2 = nn.Dropout(dropout_rate) if dropout_rate > 0 else nn.Identity()
+        self.dropout3 = nn.Dropout(dropout_rate) if dropout_rate > 0 else nn.Identity()
 
     def forward(self, x: Tensor, encoder_output: Tensor, mask = None) -> Tensor:
         # Self-attention with add & norm
         self_attention_output = self.self_attention(x, x, x, mask)
+        self_attention_output = self.dropout1(self_attention_output)
         x = self.add_and_norm1(x, self_attention_output)
 
         # Cross-attention with add & norm
         cross_attention_output = self.cross_attention(x, encoder_output, encoder_output, mask)
+        cross_attention_output = self.dropout2(cross_attention_output)
         x = self.add_and_norm2(x, cross_attention_output)
 
         # Feed-forward with add & norm
         ffn_output = self.ffn(x)
+        ffn_output = self.dropout3(ffn_output)
         return self.add_and_norm3(x, ffn_output)
 
 
@@ -65,11 +77,13 @@ class Transformer(nn.Module):
     def __init__(self,
                  mha_heads: int = 8,
                  d_model: int = 512,
+                 *,
                  ffn_hidden_dim: int = 2048,
                  n_encoder_block: int = 6,
                  n_decoder_block: int = 6,
                  vocab_size: int = 512,
-                 max_sequence_len: int = 100):
+                 max_sequence_len: int = 100,
+                 dropout_rate: float = 0):
         super(Transformer, self).__init__() # forgot this previously
         self.d_model = d_model
         self._max_len = max_sequence_len
@@ -78,12 +92,12 @@ class Transformer(nn.Module):
         # encoder
         self.encoder_embedding = nn.Embedding(vocab_size, d_model)
         self.encoder = nn.ModuleList([
-            NxEncoderBlock(mha_heads, d_model, ffn_hidden_dim) for _ in range(n_encoder_block)])
+            NxEncoderBlock(mha_heads, d_model, ffn_hidden_dim, dropout_rate) for _ in range(n_encoder_block)])
 
         # decoder
         self.decoder_embedding = nn.Embedding(vocab_size, d_model)
         self.decoder = nn.ModuleList([
-            NxDecoderBlock(mha_heads, d_model, ffn_hidden_dim) for _ in range(n_decoder_block)])
+            NxDecoderBlock(mha_heads, d_model, ffn_hidden_dim, dropout_rate) for _ in range(n_decoder_block)])
 
         # output
         self.linear_output = nn.Linear(d_model, vocab_size)
