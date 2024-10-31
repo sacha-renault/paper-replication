@@ -131,7 +131,16 @@ class Transformer(nn.Module):
 
         # apply a final linear layer
         x = self.linear_output(x)
-        return x
+
+        # in training mode, we just wanna return
+        # the raw logit because we will use CrossEntropy afterward
+        # that already contains softmax
+        if self.training:
+            return x
+
+        # else, we return the probability of token
+        else:
+            return F.softmax(x, dim=-1)
 
 if __name__ == "__main__":
     model = Transformer()
