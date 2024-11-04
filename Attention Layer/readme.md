@@ -19,4 +19,3 @@ It's been a long time i said i would implement this so ... here we go.
 
 ## Known issue
 - Transformer training: i know current training loop is bugged (it runs but will not work as expected). Currently, the teacher forcing isn't implemented well (it only removes padding or EOS token) ...
-- tokenerizer uses char-level tokenization. It won't work so great but i have some tests to do with it first.
