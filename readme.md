@@ -5,3 +5,4 @@ A personal collection of research paper implementations from [arXiv](https://arx
 ## Paper implemented
 
 - [EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks](./EfficientNet%20-%20MBConvBlock/) WORK IN PROGRESS
+- [Attention is all you need](./Attention%20Layer/) WORK IN PROGRESS
