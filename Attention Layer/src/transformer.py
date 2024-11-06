@@ -1,3 +1,4 @@
+from __future__ import annotations
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -155,3 +156,11 @@ class Transformer(nn.Module):
         # else, we return the probability of token
         else:
             return F.softmax(x, dim=-1)
+
+    def to(self, device) -> Transformer:
+        # use super for usage of base to method
+        super().to(device)
+
+        # also use to on positional encoding tensor
+        self.positional_encoding = self.positional_encoding.to(device)
+        return self
