@@ -16,6 +16,3 @@ It's been a long time i said i would implement this so ... here we go.
 - [Transformer](./src/transformer.py): My attempt to recreate the basic tranformer architecture described in the paper.
 
 - [Training ipynb file](./training_tranformers.ipynb): a notebook were basic training is implemented for sentence translation.
-
-## Known issue
-- Transformer training: i know current training loop is bugged (it runs but will not work as expected). Currently, the teacher forcing isn't implemented well (it only removes padding or EOS token) ...
