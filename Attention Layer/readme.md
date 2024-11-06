@@ -16,3 +16,7 @@ It's been a long time i said i would implement this so ... here we go.
 - [Transformer](./src/transformer.py): My attempt to recreate the basic tranformer architecture described in the paper.
 
 - [Training ipynb file](./training_tranformers.ipynb): a notebook were basic training is implemented for sentence translation.
+
+## TODO
+
+- Reproduce training in the paper (see 5th part).
