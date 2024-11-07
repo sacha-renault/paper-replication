@@ -3,6 +3,7 @@
 It's been a long time i said i would implement this so ... here we go.
 
 ## Implemented paper
+
 - [Attention is all you need](https://arxiv.org/pdf/1706.03762) Basically one of the most important paper in AI, base of all transformer architectures.
 
 ## Step by step
@@ -17,6 +18,10 @@ It's been a long time i said i would implement this so ... here we go.
 
 - [Training ipynb file](./training_tranformers.ipynb): a notebook were basic training is implemented for sentence translation.
 
+## Knwon issue
+
+- Training loop and inference might be wrong. I feel i haven't 100% caught the **teacher forcing** thing. I have to double check is alright, first in the training loop, and then, in the generation process in `infer()` function.
+
 ## TODO
 
-- Reproduce training in the paper (see 5th part).
+- Reproduce training like in the paper (see 5th part).
