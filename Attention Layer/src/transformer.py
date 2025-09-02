@@ -150,6 +150,7 @@ class Transformer(nn.Module):
         # in training mode, we just wanna return
         # the raw logit because we will use CrossEntropy afterward
         # that already contains softmax
+        return x
         if self.training:
             return x
 
