@@ -1,7 +1,7 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
+
 
 class FeedForward(nn.Module):
     def __init__(self, input_features: int, hidden_dim: int, output_features: int):

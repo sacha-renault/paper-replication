@@ -4,3 +4,4 @@ test.py
 .venv
 archive
 archive.zip
+lightning_logs
